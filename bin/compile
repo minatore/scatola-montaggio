@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir>
+
 set -e
+set -o pipefail
 
 BUILD_DIR=$1
 CACHE_DIR=$2
-LP_DIR=`cd $(dirname $0); cd ..; pwd`
+
+function indent() {
+  c='s/^/       /'
+  case $(uname) in
+    Darwin) sed -l "$c";;
+    *)      sed -u "$c";;
+  esac
+}
 
 cd $BUILD_DIR
-file1="Makefile"
-file2="makefile"
-if [ -f $file1 ]
-then
-    echo "-----> Makefile found"
-elif [ -f $file2 ]
-then
-    echo "-----> makefile found"
-else
-    echo "-----> No Makefile found.Compilation cannot continue."
-    exit 1;
+
+# configure
+if [ -f configure ]; then
+  echo "-----> Configuring"
+  ./configure CFLAGS="-O3"  2>&1 | indent
 fi
 
-make
-echo "-----> Compilation done"
+# make
+echo "-----> Compiling with Make"
+make 2>&1 | indent
