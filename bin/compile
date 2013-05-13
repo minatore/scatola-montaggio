@@ -26,7 +26,7 @@ fi
 # configure
 if [ -f configure ]; then
   echo "-----> Configuring"
-  ./configure CFLAGS="-O3"  2>&1 | indent
+  ./configure CFLAGS="-O2 -Wall -march=native"  2>&1 | indent
 fi
 
 # make
